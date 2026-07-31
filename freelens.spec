@@ -10,7 +10,6 @@ License:        MIT
 URL:            https://freelens.app
 Source0:        https://github.com/freelensapp/freelens/releases/download/v%{version}/Freelens-%{version}-linux-amd64.rpm
 
-BuildArch:      x86_64
 BuildRequires:  cpio
 BuildRequires:  desktop-file-utils
 BuildRequires:  rpm
