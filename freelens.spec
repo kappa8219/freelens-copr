@@ -3,7 +3,7 @@
 %global __requires_exclude_from /opt/Freelens/.*
 
 Name:           freelens
-Version:        1.10.3
+Version:        1.10.2
 Release:        2%{?dist}
 Summary:        Free IDE for Kubernetes
 License:        MIT
@@ -27,7 +27,7 @@ Requires:       xdg-utils
 Freelens is a free and open source IDE for Kubernetes.
 
 %prep
-echo "8a7687b3db4165e40469d5e7f3598c90d12d90148f1084d12c8fedd33fa4b0a0  %{SOURCE0}" | sha256sum --check
+echo "4f20ec36892c0402c80d0ba1f78c94ffbc279d0b7d9a17998e5ee9bdb19fbd6c  %{SOURCE0}" | sha256sum --check
 
 %install
 rpm2cpio %{SOURCE0} | cpio --extract --make-directories --quiet --directory %{buildroot}
@@ -47,5 +47,8 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/freelens.desktop
 %{_metainfodir}/app.freelens.Freelens.metainfo.xml
 
 %changelog
+* Mon Aug 17 2026 kappa8219 <4374115+kappa8219@users.noreply.github.com> - 1.10.2-2
+- Package Freelens 1.10.2
+
 * Fri Jul 31 2026 OK <o.kraievyi@quadient.com> - 1.10.3-2
 - Package the upstream Freelens RPM for COPR
