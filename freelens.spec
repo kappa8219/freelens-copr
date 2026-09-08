@@ -47,5 +47,5 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/freelens.desktop
 %{_metainfodir}/app.freelens.Freelens.metainfo.xml
 
 %changelog
-* Fri Jul 31 2026 OK <o.kraievyi@quadient.com> - 1.10.3-2
+* Fri Jul 31 2026 OK <o.kraievyi@gmail.com> - 1.10.3-2
 - Package the upstream Freelens RPM for COPR
