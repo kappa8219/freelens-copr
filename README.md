@@ -10,7 +10,7 @@ asset and verifies its SHA-256 checksum before extracting its payload.
    from [Freelens releases](https://github.com/freelensapp/freelens/releases).
 2. Update `Version`, `Release`, the `Source0` URL, the checksum in
    `freelens.spec`, and `source_url` in `.copr/Makefile`.
-3. Build from SCM in COPR for the desired Fedora chroots.
+3. Build from SCM in COPR for Fedora 43, 44, 45, and Rawhide.
 
 Install the resulting package with:
 
