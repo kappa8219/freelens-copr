@@ -18,3 +18,16 @@ Install the resulting package with:
 sudo dnf copr enable ok8219/Freelens
 sudo dnf install freelens
 ```
+
+## FreeLens 2
+
+`freelens2` is a separate COPR package built from the official FreeLens 2 RPM:
+
+```bash
+sudo dnf copr enable ok8219/freelens2
+sudo dnf install freelens2
+```
+
+The v1 `freelens` and `freelens2` RPMs use the same application paths and
+cannot be installed together. FreeLens 2 also has a breaking extension API:
+v1 extensions must be updated and reinstalled; they are not migrated.

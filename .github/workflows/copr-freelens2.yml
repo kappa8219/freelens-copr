@@ -1,0 +1,81 @@
+name: Copr FreeLens 2 build
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - freelens2.spec
+      - .github/workflows/copr-freelens2.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: fedora:45
+    steps:
+      - name: Install build dependencies
+        run: dnf --assumeyes install git python3-pip rpm-build curl
+
+      - uses: actions/checkout@v4
+
+      - name: Install Copr CLI
+        run: python3 -m pip install copr-cli
+
+      - name: Configure Copr CLI
+        env:
+          COPR_LOGIN: ${{ secrets.COPR_LOGIN }}
+          COPR_TOKEN: ${{ secrets.COPR_TOKEN }}
+          COPR_USERNAME: ${{ secrets.COPR_USERNAME }}
+        run: |
+          mkdir -p ~/.config
+          chmod 700 ~/.config
+          umask 077
+          cat > ~/.config/copr <<EOF
+          [copr-cli]
+          login = $COPR_LOGIN
+          username = $COPR_USERNAME
+          token = $COPR_TOKEN
+          copr_url = https://copr.fedorainfracloud.org
+          EOF
+
+      - name: Create Copr project if needed
+        env:
+          COPR_USERNAME: ${{ secrets.COPR_USERNAME }}
+        run: |
+          if ! copr-cli get "$COPR_USERNAME/freelens2" >/dev/null 2>&1; then
+            copr-cli create freelens2 \
+              --chroot fedora-43-x86_64 \
+              --chroot fedora-44-x86_64 \
+              --chroot fedora-45-x86_64 \
+              --chroot fedora-rawhide-x86_64 \
+              --description 'FreeLens 2, repackaged from the official RPM'
+          fi
+
+      - name: Build source RPM
+        run: |
+          set -eu
+          mkdir -p "$PWD/copr-sources" "$PWD/copr-srpms"
+          curl --fail --location --retry 2 \
+            --output "$PWD/copr-sources/Freelens-2.0.0-linux-amd64.rpm" \
+            https://github.com/freelensapp/freelens/releases/download/v2.0.0/Freelens-2.0.0-linux-amd64.rpm
+          rpmbuild -bs \
+            --define "_sourcedir $PWD/copr-sources" \
+            --define "_srcrpmdir $PWD/copr-srpms" \
+            freelens2.spec
+
+      - name: Submit Copr build
+        env:
+          COPR_USERNAME: ${{ secrets.COPR_USERNAME }}
+        run: |
+          set -eu
+          set -- "$PWD"/copr-srpms/*.src.rpm
+          test "$#" -eq 1 && test -f "$1"
+          copr-cli build "$COPR_USERNAME/freelens2" "$1" --nowait \
+            -r fedora-43-x86_64 \
+            -r fedora-44-x86_64 \
+            -r fedora-45-x86_64 \
+            -r fedora-rawhide-x86_64
