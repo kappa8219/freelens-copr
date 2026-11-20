@@ -1,0 +1,47 @@
+name: Check upstream FreeLens releases
+
+on:
+  schedule:
+    - cron: "39 9 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  check-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check latest stable releases and update packaging
+        id: update
+        run: python3 .github/scripts/update_upstream.py | tee -a "$GITHUB_OUTPUT"
+        shell: bash
+
+      - name: Open or update release PR
+        if: steps.update.outputs.updated == 'true'
+        id: pr
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: automation/freelens-upstream-release
+          delete-branch: true
+          commit-message: "Update FreeLens RPM packages"
+          title: "Update FreeLens RPM packages"
+          body: |
+            Update each packaged major-version channel to its latest stable upstream release.
+
+            Upstream releases: ${{ steps.update.outputs.release_url }}
+            The updater keeps the v1 package on v1 releases and the `freelens2` package on v2 releases.
+            The existing COPR workflows will build the affected package(s) after this PR is merged.
+
+      - name: Notify maintainer about the PR
+        if: steps.pr.outputs.pull-request-operation == 'created' || steps.pr.outputs.pull-request-operation == 'updated'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ steps.pr.outputs.pull-request-url }}
+          VERSIONS: ${{ steps.update.outputs.versions }}
+        run: gh pr comment "$PR_URL" --body "@kappa8219 FreeLens updates ($VERSIONS) are ready for review: $PR_URL"

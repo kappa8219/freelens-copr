@@ -59,9 +59,11 @@ jobs:
         run: |
           set -eu
           mkdir -p "$PWD/copr-sources" "$PWD/copr-srpms"
+          version=$(rpmspec -q --qf '%{VERSION}' freelens2.spec)
+          source="Freelens-${version}-linux-amd64.rpm"
           curl --fail --location --retry 2 \
-            --output "$PWD/copr-sources/Freelens-2.0.0-linux-amd64.rpm" \
-            https://github.com/freelensapp/freelens/releases/download/v2.0.0/Freelens-2.0.0-linux-amd64.rpm
+            --output "$PWD/copr-sources/$source" \
+            "https://github.com/freelensapp/freelens/releases/download/v${version}/${source}"
           rpmbuild -bs \
             --define "_sourcedir $PWD/copr-sources" \
             --define "_srcrpmdir $PWD/copr-srpms" \
