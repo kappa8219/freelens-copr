@@ -3,7 +3,7 @@ name: Check upstream FreeLens releases
 on:
   schedule:
     - cron: "39 9 * * *"
-  workflow_dispatch:
+  workflow_dispatch: {}
 
 permissions:
   contents: write
