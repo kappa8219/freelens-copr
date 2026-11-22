@@ -3,7 +3,7 @@
 %global __requires_exclude_from /opt/Freelens/.*
 
 Name:           freelens2
-Version:        2.0.0
+Version:        2.1.0
 Release:        1%{?dist}
 Summary:        FreeLens 2 Kubernetes IDE
 License:        MIT
@@ -35,7 +35,7 @@ from the official upstream RPM. FreeLens v1 extensions must be updated and
 reinstalled for v2.
 
 %prep
-echo "b4d80f5dccbc0aa93cce44b34f064f3190cc88d61e7c7fe368488878412626d2  %{SOURCE0}" | sha256sum --check
+echo "283a9db111af01ef3f05c2cfa865d6c366eb45b29d25828a00bf8ee52b7cf808  %{SOURCE0}" | sha256sum --check
 rpm -qp --qf '%%{NAME} %%{VERSION}\n' %{SOURCE0} | grep -Fx 'freelens %{version}'
 
 %install
@@ -58,5 +58,8 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/freelens.desktop
 %{_metainfodir}/app.freelens.Freelens.metainfo.xml
 
 %changelog
+* Sun Nov 22 2026 OK <4374115+kappa8219@users.noreply.github.com> - 2.1.0-1
+- Update FreeLens 2 to 2.1.0
+
 * Tue Nov 10 2026 OK <4374115+kappa8219@users.noreply.github.com> - 2.0.0-1
 - Package the official FreeLens 2.0.0 RPM separately from FreeLens v1
